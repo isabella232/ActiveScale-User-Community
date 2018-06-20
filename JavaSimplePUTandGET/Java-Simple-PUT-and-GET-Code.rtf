@@ -1,0 +1,170 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf760
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red127\green0\blue85;\red63\green127\blue95;\red63\green95\blue191;
+\red127\green127\blue159;\red0\green0\blue192;\red42\green0\blue255;\red106\green62\blue62;\red127\green159\blue191;
+}
+{\*\expandedcolortbl;;\csgenericrgb\c49804\c0\c33333;\csgenericrgb\c24706\c49804\c37255;\csgenericrgb\c24706\c37255\c74902;
+\csgenericrgb\c49804\c49804\c62353;\csgenericrgb\c0\c0\c75294;\csgenericrgb\c16471\c0\c100000;\csgenericrgb\c41569\c24314\c24314;\csgenericrgb\c49804\c62353\c74902;
+}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs22 \cf2 package\cf0  com.amazonaws.samples;\
+\
+\cf3 /* \cf0 \
+\cf3 Copyright (c) 2018 Western Digital Corporation or its affiliates.\cf0 \
+\cf3 SPDX-License-Identifier: MIT\cf0 \
+\cf3 Description/Other notes\cf0 \
+\cf3  * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.\cf0 \
+\cf3 =====================================================================================\cf0 \
+\cf3  * Licensed under the Apache License, Version 2.0 (the "License").\cf0 \
+\cf3  * You may not use this file except in compliance with the License.\cf0 \
+\cf3  * A copy of the License is located at\cf0 \
+\cf3  *\cf0 \
+\cf3  *  http://aws.amazon.com/apache2.0\cf0 \
+\cf3  *\cf0 \
+\cf3  * or in the "license" file accompanying this file. This file is distributed\cf0 \
+\cf3  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either\cf0 \
+\cf3  * express or implied. See the License for the specific language governing\cf0 \
+\cf3  * permissions and limitations under the License.\cf0 \
+\cf3 */\cf0 \
+\
+\cf2 import\cf0  \ul java.io\ulnone .*;\
+\cf2 import\cf0  java.io.File;\
+\cf2 import\cf0  \ul java.util.ArrayList\ulnone ;\
+\cf2 import\cf0  java.util.List;\
+\cf2 import\cf0  java.util.Scanner;\
+\cf2 import\cf0  java.io.BufferedReader;\
+\cf2 import\cf0  \ul java.io.File\ulnone ;\
+\cf2 import\cf0  \ul java.io.FileOutputStream\ulnone ;\
+\cf2 import\cf0  java.io.IOException;\
+\cf2 import\cf0  java.io.InputStream;\
+\cf2 import\cf0  java.io.InputStreamReader;\
+\cf2 import\cf0  \ul java.io.OutputStreamWriter\ulnone ;\
+\cf2 import\cf0  \ul java.io.Writer\ulnone ;\
+\cf2 import\cf0  \ul java.util.UUID\ulnone ;\
+\
+\cf2 import\cf0  \ul com.amazonaws.AmazonClientException\ulnone ;\
+\cf2 import\cf0  \ul com.amazonaws.AmazonServiceException\ulnone ;\
+\cf2 import\cf0  \ul com.amazonaws.auth.AWSCredentials\ulnone ;\
+\cf2 import\cf0  com.amazonaws.auth.AWSStaticCredentialsProvider;\
+\cf2 import\cf0  com.amazonaws.auth.BasicAWSCredentials;\
+\cf2 import\cf0  \ul com.amazonaws.auth.profile.ProfileCredentialsProvider\ulnone ;\
+\cf2 import\cf0  \ul com.amazonaws.regions.Region\ulnone ;\
+\cf2 import\cf0  \ul com.amazonaws.regions.Regions\ulnone ;\
+\cf2 import\cf0  com.amazonaws.services.s3.AmazonS3;\
+\cf2 import\cf0  \ul com.amazonaws.services.s3.AmazonS3Client\ulnone ;\
+\cf2 import\cf0  com.amazonaws.services.s3.AmazonS3ClientBuilder;\
+\cf2 import\cf0  com.amazonaws.services.s3.model.Bucket;\
+\cf2 import\cf0  com.amazonaws.services.s3.model.GetObjectRequest;\
+\cf2 import\cf0  \ul com.amazonaws.services.s3.model.ListObjectsRequest\ulnone ;\
+\cf2 import\cf0  \ul com.amazonaws.services.s3.model.ObjectListing\ulnone ;\
+\cf2 import\cf0  com.amazonaws.services.s3.model.ObjectMetadata;\
+\cf2 import\cf0  com.amazonaws.services.s3.model.PutObjectRequest;\
+\cf2 import\cf0  com.amazonaws.services.s3.model.S3Object;\
+\cf2 import\cf0  \ul com.amazonaws.services.s3.model.S3ObjectSummary\ulnone ;\
+\cf2 import\cf0  com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;\
+\cf4 /**\cf0 \
+\cf4  * This sample demonstrates how to make basic requests to Amazon S3 using the\cf0 \
+\cf4  * AWS SDK for Java.\cf0 \
+\cf4  * \cf5 <p>\cf0 \
+\cf4  * \cf5 <b>\cf4 Prerequisites:\cf5 </b>\cf4  You must have a valid Amazon Web Services developer\cf0 \
+\cf4  * account, and be signed up to use Amazon S3. For more information on Amazon\cf0 \
+\cf4  * S3, see http://aws.amazon.com/s3.\cf0 \
+\cf4  * \cf5 <p>\cf0 \
+\cf4  * Fill in your AWS access credentials in the provided credentials file\cf0 \
+\cf4  * template, and be sure to move the file to the default location\cf0 \
+\cf4  * (/Users/\ul kathyly\ulnone /.\ul aws\ulnone /credentials) where the sample code will load the credentials from.\cf0 \
+\cf4  * \cf5 <p>\cf0 \
+\cf4  * \cf5 <b>\cf4 WARNING:\cf5 </b>\cf4  To avoid accidental leakage of your credentials, DO NOT keep\cf0 \
+\cf4  * the credentials file in your source directory.\cf0 \
+\cf4  *\cf0 \
+\cf4  * http://aws.amazon.com/security\cf5 -\cf4 credentials\cf0 \
+\cf4  */\cf0 \
+\cf2 public\cf0  \cf2 class\cf0  S3Sample \{\
+\
+	\cf2 static\cf0  Scanner \cf6 userInput\cf0  = \cf2 new\cf0  Scanner(System.\cf6 in\cf0 );\
+	\cf2 static\cf0  String \cf6 clientRegion\cf0  = \cf7 "* Client region *"\cf0 ;\
+    \cf2 static\cf0  String \cf6 bucketName\cf0  = \cf7 "* Bucket name *"\cf0 ;\
+    \cf2 static\cf0  String \cf6 fileObjKeyName\cf0  = \cf7 "KatDoc.txt"\cf0 ;\
+    \cf2 static\cf0  String \cf6 fileName\cf0  = \cf7 "* Path to file to upload *"\cf0 ;\
+	\cf2 static\cf0  AmazonS3 \cf6 s3Client\cf0 ;\
+	\
+    \cf2 public\cf0  \cf2 static\cf0  \cf2 void\cf0  main(String[] \cf8 args\cf0 ) \{\
+    \cf2 try\cf0  \{\
+    	BasicAWSCredentials \cf8 credentials\cf0  = \cf2 new\cf0  BasicAWSCredentials(\cf7 "access_key_id"\cf0 , \cf7 "secret_key_id"\cf0 );\
+        EndpointConfiguration \cf8 endpoint\cf0  = \cf2 new\cf0  EndpointConfiguration(\cf7 "http://10.14.15.176:8080"\cf0 , \cf7 "us-east-1"\cf0 );\
+    	\cf6 s3Client\cf0  = AmazonS3ClientBuilder.standard()\
+    			.withCredentials(\cf2 new\cf0  AWSStaticCredentialsProvider(\cf8 credentials\cf0 ))\
+            .withRegion(\cf7 "us-east-1"\cf0 )\
+            .withEndpointConfiguration(\cf8 endpoint\cf0 )\
+            .build();\
+    	List<Bucket> \cf8 \ul \ulc8 list\cf0 \ulnone  = \cf6 s3Client\cf0 .listBuckets();\
+    \}\
+    \cf2 catch\cf0 (Exception \cf8 e\cf0 ) \
+    \{\
+		\cf8 e\cf0 .printStackTrace();\
+		System.\cf6 out\cf0 .print(\cf7 "Call was made correctly but unable to access account"\cf0 );\
+    \}\
+\
+    \cf2 while\cf0  (\cf2 true\cf0 )\{\
+		System.\cf6 out\cf0 .println(\cf7 "Would you like to (1) Read or (2) Write?"\cf0 );\
+		System.\cf6 out\cf0 .println(\cf7 "Type in 1 for for read or 2 for write"\cf0 );\
+			\cf2 int\cf0  \cf8 response\cf0  = \cf6 userInput\cf0 .nextInt();\
+			\cf2 if\cf0  (\cf8 response\cf0  == 1)\
+			\{\
+				fileRetriever(\cf7 "./KatDoc.txt"\cf0 );\
+				\cf3 //still need to work on displaying the text\cf0 \
+				System.exit(0);\
+			\}\
+			\cf2 else\cf0  \cf2 if\cf0  (\cf8 response\cf0  == 2)\
+			\{\
+				systemWriter();\
+				System.exit(0);\
+			\}\
+			\cf2 else\cf0 \
+			\{\
+				System.\cf6 out\cf0 .println(\cf7 "Invalid Input. Please try again"\cf0 );\
+			\}\
+		\}\
+	\}\
+    \
+	\
+	\cf2 public\cf0  \cf2 static\cf0  \cf2 void\cf0  systemWriter() \
+	\{\
+        PutObjectRequest \cf8 request\cf0  = \cf2 new\cf0  PutObjectRequest(\cf6 bucketName\cf0 , \cf6 fileObjKeyName\cf0 , \cf2 new\cf0  File(\cf6 fileName\cf0 ));\
+        ObjectMetadata \cf8 metadata\cf0  = \cf2 new\cf0  ObjectMetadata();\
+        \cf8 metadata\cf0 .setContentType(\cf7 "modified document"\cf0 );\
+        \cf8 metadata\cf0 .addUserMetadata(\cf7 "x-amz-meta-title"\cf0 , \cf7 "someTitle"\cf0 );\
+        \cf8 request\cf0 .setMetadata(\cf8 metadata\cf0 );\
+        \cf6 s3Client\cf0 .putObject(\cf8 request\cf0 );\
+	\}\
+	\
+    \
+    \cf2 public\cf0  \cf2 static\cf0  \cf2 void\cf0  fileRetriever(String \cf8 nameofFile\cf0 ) \{\
+\
+        \cf3 // Get an object and print its contents.\cf0 \
+        System.\cf6 out\cf0 .println(\cf7 "Downloading an object"\cf0 );\
+        S3Object \cf8 s3object\cf0  = \cf6 s3Client\cf0 .getObject(\cf2 new\cf0  GetObjectRequest(\cf6 bucketName\cf0 , \cf8 nameofFile\cf0 ));\
+        System.\cf6 out\cf0 .println(\cf7 "Content-Type: "\cf0  + \cf8 s3object\cf0 .getObjectMetadata().getContentType());\
+        System.\cf6 out\cf0 .println(\cf7 "Content: "\cf0 );\
+        \cf2 try\cf0  \{\
+			displayTextInputStream(\cf8 s3object\cf0 .getObjectContent());\
+		\} \cf2 catch\cf0  (IOException \cf8 e\cf0 ) \{\
+			\cf3 // \cf9 TODO\cf3  Auto-generated catch block\cf0 \
+			\cf8 e\cf0 .printStackTrace();\
+		\}       \
+	\}\
+	\
+	   \cf2 private\cf0  \cf2 static\cf0  \cf2 void\cf0  displayTextInputStream(InputStream \cf8 input\cf0 ) \cf2 throws\cf0  IOException \{\
+	        \cf3 // Read the text input stream one line at a time and display each line.\cf0 \
+	        BufferedReader \cf8 reader\cf0  = \cf2 new\cf0  BufferedReader(\cf2 new\cf0  InputStreamReader(\cf8 input\cf0 ));\
+	        String \cf8 line\cf0  = \cf2 null\cf0 ;\
+	        \cf2 while\cf0  ((\cf8 line\cf0  = \cf8 reader\cf0 .readLine()) != \cf2 null\cf0 ) \{\
+	            System.\cf6 out\cf0 .println(\cf8 line\cf0 );\
+	        \}\
+	        System.\cf6 out\cf0 .println();\
+	    \}\
+\
+\}}

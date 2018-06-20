@@ -1,1 +1,1 @@
-Read me
+This code sample uses AWS Java SDK and allows users to have the option to do a simple PUT and GET on buckets. Modification of the client region, bucket name, file object name, secret and access keys, and endpoint configurations will be needed. 

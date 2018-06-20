@@ -1,0 +1,1 @@
+This tool basically will help you manage your capacity consumption by putting an expiration date on your old file’s configurations after a set amount of days. This tool is best paired up with S3 Versioning to put an expiration date on older versions of a file to prevent large capacity consumption on files that will not be used. 

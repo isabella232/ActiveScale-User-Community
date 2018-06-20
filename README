@@ -1,0 +1,32 @@
+Projects:
+=============================================================================
+
+Object Lifecycle Management
+
+This tool basically will help you manage your capacity consumption by putting an expiration date on your old file’s configurations after a set amount of days. This tool is best paired up with S3 Versioning to put an expiration date on older versions of a file to prevent large capacity consumption on files that will not be used. 
+
+=============================================================================
+
+Documented S3 Versioning
+
+Versioning saves the historical features in your objects for data safety and security reasons. When multiple users are working on one specific project, accidental overwrite and deletion can be made to an object which could produce unwanted results to the project. Enabling versioning on a bucket will prevent unwanted overwrites or deletions as users will be able to recover their data by grabbing previous versions of the object
+
+=============================================================================
+
+Process of Repository Acceptance
+
+This document will explain the process of reviewing submitted sample code or tips and tricks that we can add to our ActiveScale Community Repository List. Although there is an estimated timeline assigned to each process, a definite timeline cannot be guaranteed as any unexpected events may occur affecting the timeline schedule. 
+
+=============================================================================
+
+Tools Documentation Format
+
+Basic plain template that the User Community uses for uniformed documentation. Please use this documentation if you wish to give back to the community with a submission. 
+
+=============================================================================
+
+Java: Simple PUT and GET
+
+This code sample uses AWS Java SDK and allows users to have the option to do a simple PUT and GET on buckets. Modification of the client region, bucket name, file object name, secret and access keys, and endpoint configurations will be needed. 
+
+=============================================================================
